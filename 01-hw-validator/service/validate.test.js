@@ -71,6 +71,7 @@ describe('checkLessEquals255', () => {
         expect(checkLessEquals255('0')).toBe(true);
         expect(checkLessEquals255('255')).toBe(true);
         expect(checkLessEquals255('5')).toBe(true);
+        expect(checkLessEquals255('10')).toBe(true);
         expect(checkLessEquals255('58')).toBe(true);
         expect(checkLessEquals255('199')).toBe(true);
     });

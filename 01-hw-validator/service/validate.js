@@ -6,13 +6,14 @@ const CheckCreditCardNumber = (number) => {
 
 const CheckDateFormatEU = (date) => {
     // TODO Date (Format: DD.MM.YYYY)
-    const pattern = /^(0{1}[1-9]{1}|[12]{1}[0-9]{1}|3{1}[01]{1})\.(0{1}[1-9]|1{1}[012])\.\d{4}$/;
+    // const pattern = /^(0{1}[1-9]{1}|[12]{1}[0-9]{1}|3{1}[01]{1})\.(0{1}[1-9]|1{1}[012])\.\d{4}$/;
+    const pattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d{4}$/;
     return pattern.test(date);
 };
 
 const checkDateFormatUS = (date) => {
     // TODO Date format (US) YYYY-MM-DD
-    const pattern = /^\d{4}-(0{1}[1-9]|1{1}[012])-(0{1}[1-9]|[12]{1}[0-9]|3{1}[01]{1})$/;
+    const pattern = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
     return pattern.test(date);
 };
 
@@ -24,7 +25,8 @@ const checkPhoneNumber = (phone) => {
 
 const checkLessEquals255 = (value) => {
     // TODO Number less and equals 255 (positive) 0-255
-    const pattern = /^(0|[1-9]\d?|1\d\d|2[0-4]\d|25[0-5])$/;
+    // const pattern = /^(0|[1-9]\d?|1\d\d|2[0-4]\d|25[0-5])$/;
+    const pattern = /^((1?\d?\d)|(2[0-4]\d)|(25[0-5]))$/;
     return pattern.test(value)
 };
 
