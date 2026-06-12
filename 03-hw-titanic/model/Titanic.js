@@ -1,68 +1,143 @@
+import fs from 'node:fs';
+import readline from 'node:readline';
+
 export class Titanic {
-    constructor(data, separator) {
-        this.data = data.map(s => s.split(separator))
+    constructor(src, separator) {
+        this.src = src;
+        this.separator = separator;
     }
 
-    get totalFares() {
-        return this.data
-            .map(c => +c[9])
-            .filter(f => !isNaN(f))
-            .reduce((a, b) => a + b);
+    totalFares() {
+        const reader = readline.createInterface({
+            input: fs.createReadStream(this.src, 'utf-8'),
+            crlfDelay: Infinity
+        });
+        let res = 0;
+        let isFirstLine = true;
+        reader.on('line', line => {
+            if (isFirstLine) {
+                isFirstLine = false;
+                return;
+            }
+            const cells = line.split(this.separator);
+            res += !!cells[9] && +cells[9];
+        })
+
+        reader.on('close', () => {
+            console.log(`Total fares:`, res.toFixed(2));
+        })
     }
 
-    get avgFaresByClasses() {
-        const res = this.data
-            .filter(c => !isNaN(+c[9]))
-            .map(c => ({pClass: c[2], fare: +c[9]}))
-            .reduce((acc, info) => {
+    avgFaresByClasses() {
+        const reader = readline.createInterface({
+            input: fs.createReadStream(this.src, 'utf-8'),
+            crlfDelay: Infinity
+        });
+        let res = {};
+        let isFirstLine = true;
+        reader.on('line', line => {
+            if (isFirstLine) {
+                isFirstLine = false;
+                return;
+            }
+            const cells = line.split(this.separator);
+            if (cells[9]) {
+                const info = {pClass: cells[2], fare: +cells[9]};
                 const key = info.pClass;
-                if (!acc[key]) {
-                    acc[key] = [];
+                if (!res[key]) {
+                    res[key] = [];
                 }
-                acc[key].push(info.fare);
-                return acc;
-            }, {})
-        for (const key in res) {
-            res[key] = +(res[key].reduce((a, b) => a + b) / res[key].length).toFixed(2);
-        }
-        return res;
+                res[key].push(info.fare);
+            }
+        })
+        reader.on('close', () => {
+            for (const key in res) {
+                res[key] = +(res[key].reduce((a, b) => a + b) / res[key].length).toFixed(2);
+            }
+            console.log(`Average fares by classes:`, res);
+        })
     }
 
-    get totalSurvived() {
-        return this.data
-            .reduce((acc, c) => {
-                const key = +c[1] ? 'Survived' : 'Non survived';
-                if (!acc[key]) {
-                    acc[key] = 0;
-                }
-                acc[key]++;
-                return acc;
-            }, {})
+    totalSurvived() {
+        const reader = readline.createInterface({
+            input: fs.createReadStream(this.src, 'utf-8'),
+            crlfDelay: Infinity
+        });
+        let res = {};
+        let isFirstLine = true;
+        reader.on('line', line => {
+            if (isFirstLine) {
+                isFirstLine = false;
+                return;
+            }
+            const cells = line.split(this.separator);
+            const key = +cells[1] ? 'Survived' : 'Non survived';
+            if (!res[key]) {
+                res[key] = 0;
+            }
+            res[key]++;
+        })
+        reader.on('close', () => {
+            console.log(res);
+        })
     }
 
-    get totalSurvivedByGender() {
-        return this.data
-            .reduce((acc, c) => {
-                const key = this._survivedGender(c[4], c[1]);
-                if (!acc[key]) {
-                    acc[key] = 0;
-                }
-                acc[key]++;
-                return acc;
-            }, {})
+    totalSurvivedByGender() {
+        const reader = readline.createInterface({
+            input: fs.createReadStream(this.src, 'utf-8'),
+            crlfDelay: Infinity
+        });
+        let res = {};
+        let isFirstLine = true;
+        reader.on('line', line => {
+            if (isFirstLine) {
+                isFirstLine = false;
+                return;
+            }
+            const cells = line.split(this.separator);
+            const key = this._survivedGender(cells[4], cells[1]);
+            if (!res[key]) {
+                res[key] = 0;
+            }
+            res[key]++;
+        })
+        reader.on('close', () => {
+            console.log(res);
+        })
     }
 
-    get totalSurvivedChildren() {
-        return this.data
-            .filter(c => c[5] && c[5] < 18)
-            .reduce((acc, c) => {
-                const key = +c[1] ? 'Children survived' : 'Children non survived';
-                if (!acc[key]) {
-                    acc[key] = 0;
+    totalSurvivedChildren() {
+        const reader = readline.createInterface({
+            input: fs.createReadStream(this.src, 'utf-8'),
+            crlfDelay: Infinity
+        });
+        let res = {};
+        let isFirstLine = true;
+        reader.on('line', line => {
+            if (isFirstLine) {
+                isFirstLine = false;
+                return;
+            }
+            const cells = line.split(this.separator);
+            if (cells[5] && cells[5] < 18) {
+                const key = +cells[1] ? 'Children survived' : 'Children non survived';
+                if (!res[key]) {
+                    res[key] = 0;
                 }
-                acc[key]++;
-                return acc;
-            }, {})
+                res[key]++;
+            }
+        })
+        reader.on('close', () => {
+            console.log(res);
+        })
+    }
+
+    showStats() {
+        this.totalFares();
+        this.avgFaresByClasses();
+        this.totalSurvived();
+        this.totalSurvivedByGender();
+        this.totalSurvivedChildren();
     }
 
     _survivedGender(gender, survived) {
