@@ -1,0 +1,13 @@
+{
+  "name": "03-hw-titanic",
+  "version": "1.0.0",
+  "description": "Titanic statistics",
+  "main": "titanic.js",
+  "scripts": {
+    "titanicStats": "node titanicStats.js"
+  },
+  "keywords": [],
+  "author": "ijn",
+  "license": "ISC",
+  "type": "module"
+}
