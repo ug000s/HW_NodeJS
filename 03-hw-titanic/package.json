@@ -4,7 +4,8 @@
   "description": "Titanic statistics",
   "main": "titanic.js",
   "scripts": {
-    "titanicStats": "node titanicStats.js"
+    "titanicStats": "node titanicStats.js",
+    "stats": "node index.js"
   },
   "keywords": [],
   "author": "ijn",
